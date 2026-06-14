@@ -1,0 +1,12 @@
+{
+  "name": "@crowd-mgmt/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "kafkajs":  "^2.2.4",
+    "ioredis":  "^5.11.1",
+    "amqplib":  "^2.0.1",
+    "dotenv":   "^17.4.2"
+  }
+}

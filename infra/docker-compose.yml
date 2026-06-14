@@ -1,0 +1,327 @@
+
+services:
+
+  # ── POSTGRES ────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    # 17 = current stable major (released Sept 2024).
+    # -alpine strips non-essential OS packages: ~80MB vs ~400MB full image.
+    # Never use :latest in compose — it moves silently and breaks reproducibility.
+    environment:
+      POSTGRES_DB: crowd_mgmt
+      POSTGRES_USER: crowd
+      POSTGRES_PASSWORD: crowd_secret
+      # These three are the postgres image's official init hook.
+      # On FIRST BOOT ONLY, the entrypoint script runs initdb,
+      # creates the DB, and creates the user. On subsequent boots,
+      # if the data volume already exists, these are completely ignored —
+      # changing them after first boot has zero effect.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Named volume (managed by Docker) instead of bind mount.
+      # Survives `docker compose down`. Only wiped by `docker compose down -v`.
+      - ./db/migrations:/docker-entrypoint-initdb.d
+      # Anything in this directory is executed alphabetically on first boot:
+      # .sql files are run via psql, .sh files are executed as shell.
+      # Critical for seeding initial schema. Does NOT re-run on subsequent boots.
+    ports:
+      - "5432:5432"
+      # host:container. Exposes postgres to your host machine (TablePlus, psql CLI).
+      # Other containers connect via the service name 'postgres:5432', never localhost.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crowd -d crowd_mgmt"]
+      # pg_isready is postgres's own readiness probe — checks if the server
+      # is accepting connections for the specific user+db combo.
+      # More reliable than just pinging port 5432 (port open ≠ postgres ready).
+      interval: 10s   # run every 10s
+      timeout: 5s     # fail if no response within 5s
+      retries: 5      # mark unhealthy after 5 consecutive failures
+
+  # ── REDIS ────────────────────────────────────────────────────────
+  redis:
+    image: redis:8-alpine
+    # Redis 8 (8.8.0 as of June 2026). Redis 8 added vector search natively,
+    # but we're using it for pub/sub, geofencing cache, and session state.
+    command: redis-server --appendonly yes
+    # Overrides the default CMD. --appendonly yes enables AOF (Append Only File)
+    # persistence: every write command is logged to disk.
+    # Without this, Redis is purely in-memory — a container restart loses all data.
+    # RDB snapshots (default) are periodic; AOF is safer for crowd density state.
+    volumes:
+      - redis_data:/data
+      # Redis writes AOF/RDB files to /data inside the container.
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      # redis-cli ping → server responds PONG if healthy.
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── KAFKA (KRaft, no ZooKeeper) ──────────────────────────────────
+  kafka:
+    image: apache/kafka:4.3.0
+    # Official Apache Kafka image. Kafka 4.x dropped ZooKeeper entirely —
+    # it's not deprecated, it's REMOVED. KRaft (Kafka Raft) is the only mode.
+    # KRaft embeds the metadata quorum inside Kafka itself using the Raft
+    # consensus algorithm, eliminating ZooKeeper as a separate dependency.
+    # One fewer service = one fewer failure point.
+    ports:
+      - "9092:9092"
+      # Exposes the PLAINTEXT_HOST listener for host machine access
+      # (local producer scripts, Kafka UI tools like Offset Explorer).
+      # Internal service-to-service traffic uses port 29092 (never exposed).
+    environment:
+      KAFKA_NODE_ID: 1
+      # Unique broker ID. In a multi-broker cluster each node gets a different ID.
+      # For dev single-node, 1 is fine.
+
+      KAFKA_PROCESS_ROLES: broker,controller
+      # KRaft "combined mode": this single node acts as BOTH the broker
+      # (handles producer/consumer traffic) AND the controller (handles
+      # cluster metadata, leader elections). In prod you'd separate these
+      # onto dedicated nodes, but combined mode is correct for dev.
+
+      KAFKA_LISTENERS: PLAINTEXT://:29092,CONTROLLER://:9093,PLAINTEXT_HOST://:9092
+      # Three sockets this broker opens:
+      # PLAINTEXT     :29092 → internal container-to-container traffic
+      # CONTROLLER    :9093  → KRaft consensus between controller nodes
+      # PLAINTEXT_HOST:9092  → host machine access
+
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      # What Kafka tells clients to connect to AFTER the initial handshake.
+      # This is the critical dual-listener trick:
+      # - Services inside Docker use 'kafka:29092' (DNS resolves via Docker network)
+      # - Your host machine uses 'localhost:9092' (mapped via the ports: above)
+      # If you only had PLAINTEXT://localhost:9092, containers trying to connect
+      # would look for 'localhost' inside their OWN container — instant failure.
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      # Maps each named listener to its security protocol.
+      # PLAINTEXT = unencrypted. In prod you'd use SSL or SASL_SSL.
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      # The list of controller nodes participating in Raft consensus.
+      # Format: nodeId@host:port. Since we're single-node, just node 1.
+      # In a 3-node cluster this would be: 1@kafka1:9093,2@kafka2:9093,3@kafka3:9093
+
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # Tells Kafka which listener name is used for controller-to-controller
+      # Raft communication. Must match one of the names in KAFKA_LISTENERS.
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # Which listener brokers use to talk to each other (replication traffic).
+      # For single-node this doesn't matter much, but must be set.
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # __consumer_offsets is Kafka's internal topic tracking consumer group positions.
+      # Replication factor 1 = no redundancy, fine for dev.
+      # In prod with 3 brokers, set to 3.
+
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      # Same story for the transactions state log. ISR = In-Sync Replicas.
+      # Min ISR of 1 means a single replica is sufficient to ack a write.
+
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      # Kafka creates a topic the first time a producer writes to it.
+      # Convenient for dev. In prod, disable this and manage topics explicitly
+      # (otherwise typos silently create phantom topics).
+
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      # KRaft requires a stable base64-encoded UUID to identify the cluster.
+      # Without a fixed value, Kafka regenerates it every container start,
+      # breaking any persisted metadata. Generate your own with:
+      # docker run --rm apache/kafka:4.3.0 /opt/kafka/bin/kafka-storage.sh random-uuid
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+      # start_period: gives Kafka 30s to initialize before healthcheck failures
+      # count against retries. Kafka JVM startup is slow (~15-20s).
+
+  # ── RABBITMQ ─────────────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    # RabbitMQ 4.x. '-management' bundles the web UI plugin.
+    # '-alpine' keeps it small.
+    # We use RabbitMQ alongside Kafka specifically for PRIORITY QUEUES:
+    # Kafka has no native priority concept (it's an ordered log).
+    # RabbitMQ's x-max-priority queues let critical alerts (venue over-capacity)
+    # jump ahead of routine density updates — this is the core interview argument
+    # for keeping both message brokers.
+    environment:
+      RABBITMQ_DEFAULT_USER: crowd
+      RABBITMQ_DEFAULT_PASS: crowd_secret
+    ports:
+      - "5672:5672"    # AMQP protocol port (producers/consumers)
+      - "15672:15672"  # Management UI → http://localhost:15672
+      # The UI lets you visually inspect queues, message rates, priority
+      # queue depth — invaluable during demos and debugging.
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      # rabbitmq-diagnostics ping checks that the RabbitMQ app is running,
+      # not just that the container's port is open.
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ── APP SERVICES ─────────────────────────────────────────────────
+  api:
+    build:
+      context: ./services/api
+      # Compose sends this directory to the Docker build daemon as the build context.
+      # The Dockerfile inside ./services/api runs relative to this.
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgresql://crowd:crowd_secret@postgres:5432/crowd_mgmt
+      # 'postgres' resolves via Docker's internal DNS — every service on the
+      # same network can reach others by their service name.
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      # Internal listener — never use localhost:9092 from inside a container.
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      # service_healthy = wait for the healthcheck to pass, not just container start.
+      # Without this, api starts, tries to connect to postgres, postgres isn't
+      # accepting connections yet, api crashes. Docker restarts it, maybe it works
+      # on attempt 3. With this, the ordering is deterministic.
+
+  ws-server:
+    build:
+      context: ./services/ws-server
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      REDIS_URL: redis://redis:6379
+      # ws-server uses Redis pub/sub to fan out crowd density updates to all
+      # connected WebSocket clients — multiple ws-server instances can all
+      # subscribe to the same Redis channel for horizontal scaling later.
+      KAFKA_BROKERS: kafka:29092
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  aggregator:
+    build:
+      context: ./services/aggregator
+    # No ports: — this is an internal worker, never reached from outside.
+    # It consumes raw device pings from Kafka, aggregates crowd density
+    # per zone per interval, writes to Postgres, updates Redis geofence cache,
+    # and publishes alert candidates to RabbitMQ priority queue.
+    environment:
+      DATABASE_URL: postgresql://crowd:crowd_secret@postgres:5432/crowd_mgmt
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      RABBITMQ_URL: amqp://crowd:crowd_secret@rabbitmq:5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  alert-service:
+    build:
+      context: ./services/alert-service
+    # Consumes from RabbitMQ priority queue. High-priority alerts (capacity
+    # breaches) are processed before low-priority ones regardless of arrival order.
+    # This is the head-of-line blocking argument: in Kafka, a high-priority
+    # message stuck behind 10k low-priority messages in the same partition
+    # has no way to jump the queue. RabbitMQ solves this.
+    environment:
+      DATABASE_URL: postgresql://crowd:crowd_secret@postgres:5432/crowd_mgmt
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://crowd:crowd_secret@rabbitmq:5672
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  dashboard-push:
+    build:
+      context: ./services/dashboard-push
+    # Reads aggregated state from Redis and pushes diffs to ws-server.
+    # Separated from ws-server because push frequency (e.g. every 1s) and
+    # WebSocket connection management are distinct responsibilities.
+    environment:
+      REDIS_URL: redis://redis:6379
+      WS_SERVER_INTERNAL_URL: ws://ws-server:3002
+      # Internal URL — note ws:// not wss:// for container-to-container.
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  dashboard:
+    build:
+      context: ./dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_WS_URL: ws://localhost:3002
+      VITE_API_URL: http://localhost:3001
+      # VITE_ prefix is Vite's convention for env vars exposed to browser code.
+      # These use localhost because the BROWSER (outside Docker) connects here,
+      # not another container. The browser has no idea 'ws-server' exists.
+
+  # ── SIMULATOR (opt-in) ───────────────────────────────────────────
+  simulator:
+    build:
+      context: ./simulator
+    environment:
+      KAFKA_BROKERS: kafka:29092
+      VENUE_COUNT: "5"
+      DEVICES_PER_VENUE: "20"
+      # Generates synthetic device pings for 5 venues × 20 devices = 100 streams.
+    depends_on:
+      kafka:
+        condition: service_healthy
+    profiles:
+      - simulation
+      # profiles: means this service is EXCLUDED from normal `docker compose up`.
+      # Only starts when you explicitly run:
+      #   docker compose --profile simulation up
+      # Keeps your dev environment clean — you don't always want fake data flooding in.
+
+# ── NETWORK ────────────────────────────────────────────────────────
+networks:
+  default:
+    name: crowd-mgmt-network
+    # By default Compose creates a network named '<projectdir>_default'.
+    # Giving it an explicit name makes it predictable and easier to reference
+    # when debugging with `docker network inspect crowd-mgmt-network`.
+    # All services automatically join this network — no need to declare
+    # 'networks:' on each service unless you need isolation between services.
+
+# ── VOLUMES ────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  redis_data:
+  kafka_data:
+  rabbitmq_data:
+  # Named volumes are managed by Docker and persist across `docker compose down`.
+  # They are only deleted with `docker compose down -v` or `docker volume rm`.
+  # This is intentional: you don't want to lose your DB on every restart.
+  # Bind mounts (./local/path:/container/path) are for source code hot-reload,
+  # not for database storage — they cause permission issues on WSL2 and Windows.

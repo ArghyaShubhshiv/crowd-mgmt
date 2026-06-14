@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ConPulse — Live Crowd Density</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; font-family:system-ui,sans-serif; background:#0f1115; color:#e6e8eb; padding:24px; }
+  header { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+  h1 { font-size:18px; font-weight:600; margin:0; }
+  #status { font-size:13px; color:#8a8f98; }
+  .dot { width:10px; height:10px; border-radius:50%; background:#ef4444; display:inline-block; }
+  .dot.live { background:#22c55e; }
+  #banner { position:fixed; top:0; left:0; right:0; padding:14px 24px; font-size:15px; font-weight:600;
+            color:#fff; text-align:center; transform:translateY(-100%); transition:transform .3s ease; z-index:10; }
+  #banner.show { transform:translateY(0); }
+  #banner.critical { background:#dc2626; }
+  #banner.warning  { background:#d97706; }
+  #banner.ok       { background:#16a34a; }
+  #grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; }
+  .card { border-radius:12px; padding:18px; background:#1a1d23; border:1px solid #272b33; transition:border-color .3s; }
+  .card .zone { font-size:13px; color:#9aa0aa; margin-bottom:8px; }
+  .card .count { font-size:40px; font-weight:700; line-height:1; }
+  .card .label { font-size:12px; margin-top:8px; text-transform:uppercase; letter-spacing:.05em; }
+  .low { border-color:#1f6f43; } .low .label { color:#22c55e; }
+  .medium { border-color:#9a7b1f; } .medium .label { color:#eab308; }
+  .high { border-color:#a23b3b; } .high .label { color:#ef4444; }
+  #updated { margin-top:20px; font-size:12px; color:#6b7280; }
+</style>
+</head>
+<body>
+  <div id="banner"></div>
+  <header>
+    <span id="dot" class="dot"></span>
+    <h1>ConPulse — org_festival_a</h1>
+    <span id="status">connecting…</span>
+  </header>
+  <div id="grid"></div>
+  <div id="updated"></div>
+<script>
+  const ORG = 'org_festival_a'
+  const grid = document.getElementById('grid')
+  const dot = document.getElementById('dot')
+  const status = document.getElementById('status')
+  const updated = document.getElementById('updated')
+  const banner = document.getElementById('banner')
+
+  const level = n => n >= 15 ? 'high' : n >= 5 ? 'medium' : 'low'
+
+  function renderDensity(densities) {
+    const zones = Object.keys(densities).sort()
+    if (!zones.length) { grid.innerHTML = '<div style="color:#6b7280">no zones reporting yet — is the feeder running?</div>'; return }
+    grid.innerHTML = zones.map(zone => {
+      const n = Number(densities[zone]); const lv = level(n)
+      return `<div class="card ${lv}"><div class="zone">${zone}</div><div class="count">${n}</div><div class="label">${lv}</div></div>`
+    }).join('')
+  }
+
+  let bannerTimer
+  function showAlert(a) {
+    banner.textContent = a.message
+    banner.className = 'show ' + a.severity
+    clearTimeout(bannerTimer)
+    bannerTimer = setTimeout(() => { banner.className = a.severity }, 5000)
+  }
+
+  function connect() {
+    const ws = new WebSocket(`ws://localhost:4001/live?org_id=${ORG}`)
+    ws.onopen = () => { dot.classList.add('live'); status.textContent = 'live' }
+    ws.onmessage = e => {
+      const msg = JSON.parse(e.data)
+      if (msg.type === 'alert') { showAlert(msg); return }
+      renderDensity(msg.densities || {})
+      updated.textContent = 'updated ' + new Date(msg.ts).toLocaleTimeString()
+    }
+    ws.onclose = () => { dot.classList.remove('live'); status.textContent = 'disconnected — retrying…'; setTimeout(connect, 1500) }
+    ws.onerror = () => ws.close()
+  }
+  connect()
+</script>
+</body>
+</html>

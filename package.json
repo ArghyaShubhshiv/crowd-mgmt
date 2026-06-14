@@ -1,0 +1,25 @@
+{
+  "name": "crowd-mgmt",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "packages/*",
+    "dashboard"
+  ],
+  "scripts": {
+  "infra:up":   "docker compose -f infra/docker-compose.yml up -d kafka redis rabbitmq postgres",
+  "infra:down": "docker compose -f infra/docker-compose.yml down",
+  "infra:logs": "docker compose -f infra/docker-compose.yml logs -f",
+    "ws": "dotenv -e .env -- npm run dev -w services/ws-server",
+    "aggregator": "npm run dev -w services/aggregator"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^11.0.0",
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
