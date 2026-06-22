@@ -32,13 +32,13 @@
   <div id="banner"></div>
   <header>
     <span id="dot" class="dot"></span>
-    <h1>ConPulse — org_festival_a</h1>
+    <h1>ConPulse — summer-fest-2026</h1>
     <span id="status">connecting…</span>
   </header>
   <div id="grid"></div>
   <div id="updated"></div>
 <script>
-  const ORG = 'org_festival_a'
+  const EVENT = 'summer-fest-2026'
   const grid = document.getElementById('grid')
   const dot = document.getElementById('dot')
   const status = document.getElementById('status')
@@ -65,7 +65,7 @@
   }
 
   function connect() {
-    const ws = new WebSocket(`ws://localhost:4001/live?org_id=${ORG}`)
+    const ws = new WebSocket(`ws://localhost:4001/live?event_slug=${EVENT}`)
     ws.onopen = () => { dot.classList.add('live'); status.textContent = 'live' }
     ws.onmessage = e => {
       const msg = JSON.parse(e.data)

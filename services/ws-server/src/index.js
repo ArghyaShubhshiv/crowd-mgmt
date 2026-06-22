@@ -8,10 +8,10 @@ const app = Fastify({ logger: true })
 await app.register(websocketPlugin)
 
 app.get('/locations', { websocket: true }, (socket, request) => {
-  const orgId = request.query.org_id
-  if (!orgId) { socket.close(1008, 'org_id is required'); return }
+  const eventSlug = request.query.event_slug
+  if (!eventSlug) { socket.close(1008, 'event_slug is required'); return }
 
-  const topic = `location.${orgId}`
+  const topic = `locations`
   console.log(`[WS] Client connected → topic: ${topic}`)
 
   socket.on('message', async (rawMessage) => {
@@ -23,28 +23,23 @@ app.get('/locations', { websocket: true }, (socket, request) => {
       return
     }
 
-    const { visitor_token, zone_id, lat, lng, timestamp } = payload
-    if (!visitor_token || !zone_id || lat == null || lng == null) {
+    const { visitor_token, lat, lng, timestamp } = payload
+    if (!visitor_token || lat == null || lng == null) {
       console.warn('[WS] Missing required fields — dropping frame')
       return
     }
 
-    await redis.setex(`presence:${orgId}:${visitor_token}`, 30, zone_id)
+    await redis.setex(`presence:${eventSlug}:${visitor_token}`, 30, '1')
 
     await producer.send({
-      topic,
+      topic: 'locations',
       messages: [
         {
-          // No key → Kafka distributes messages uniformly across partitions.
-          // Density is aggregated statelessly in Redis (ZADD GT), so we don't
-          // rely on per-partition ordering.
+          key: eventSlug,                 // all of one event's pings → same partition (per-event order)
           value: JSON.stringify({
             visitor_token,
-            org_id: orgId,
-            zone_id,
-            lat,
-            lng,
-            timestamp,
+            event_slug: eventSlug,
+            lat, lng, timestamp,
             server_ts: Date.now()
           })
         }

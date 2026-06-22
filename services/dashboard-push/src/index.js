@@ -5,10 +5,10 @@ import { redis, getChannel } from '@crowd-mgmt/shared'
 const app = Fastify({ logger: false })
 await app.register(websocketPlugin)
 
-const subscribers = new Map()   // org_id -> Set of sockets
+const subscribers = new Map()   // eventSlug -> Set of sockets
 
-function broadcast(orgId, message) {
-  const sockets = subscribers.get(orgId)
+function broadcast(eventSlug, message) {
+  const sockets = subscribers.get(eventSlug)
   if (!sockets) return
   const payload = JSON.stringify(message)
   for (const socket of sockets) {
@@ -17,24 +17,24 @@ function broadcast(orgId, message) {
 }
 
 app.get('/live', { websocket: true }, (socket, request) => {
-  const orgId = request.query.org_id
-  if (!orgId) { socket.close(1008, 'org_id is required'); return }
-  if (!subscribers.has(orgId)) subscribers.set(orgId, new Set())
-  subscribers.get(orgId).add(socket)
-  console.log(`[Push] browser subscribed → ${orgId} (${subscribers.get(orgId).size} live)`)
-  socket.on('close', () => subscribers.get(orgId)?.delete(socket))
+  const eventSlug = request.query.event_slug
+  if (!eventSlug) { socket.close(1008, 'event_slug is required'); return }
+  if (!subscribers.has(eventSlug)) subscribers.set(eventSlug, new Set())
+  subscribers.get(eventSlug).add(socket)
+  console.log(`[Push] browser subscribed → ${eventSlug} (${subscribers.get(eventSlug).size} live)`)
+  socket.on('close', () => subscribers.get(eventSlug)?.delete(socket))
 })
 
-// density: poll Redis every second, push to each org's browsers
+// density: poll Redis every second, push to each event's browsers
 setInterval(async () => {
-  for (const [orgId, sockets] of subscribers) {
+  for (const [eventSlug, sockets] of subscribers) {
     if (sockets.size === 0) continue
-    const densities = await redis.hgetall(`density:${orgId}`)
-    broadcast(orgId, { type: 'density', org_id: orgId, densities, ts: Date.now() })
+    const densities = await redis.hgetall(`density:${eventSlug}`)
+    broadcast(eventSlug, { type: 'density', event_slug: eventSlug, densities, ts: Date.now() })
   }
 }, 1000)
 
-// alerts: consume the priority queue, push each to that org's browsers
+// alerts: consume the priority queue, push each to that event's browsers
 const channel = await getChannel()
 await channel.assertExchange('alerts', 'topic', { durable: true })
 await channel.assertQueue('alerts.dashboard', { durable: true, arguments: { 'x-max-priority': 10 } })
@@ -43,7 +43,7 @@ await channel.prefetch(1)   // one at a time, so priority order is honoured
 channel.consume('alerts.dashboard', (msg) => {
   if (!msg) return
   const alert = JSON.parse(msg.content.toString())
-  broadcast(alert.org_id, { type: 'alert', ...alert })
+  broadcast(alert.event_slug, { type: 'alert', ...alert })
   console.log(`[Push] alert → ${alert.zone} ${alert.severity}`)
   channel.ack(msg)
 })

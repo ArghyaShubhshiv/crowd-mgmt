@@ -1,12 +1,16 @@
 {
   "name": "@crowd-mgmt/shared",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./*": "./*"
+  },
   "dependencies": {
-    "kafkajs":  "^2.2.4",
-    "ioredis":  "^5.11.1",
-    "amqplib":  "^2.0.1",
-    "dotenv":   "^17.4.2"
+    "amqplib": "^2.0.1",
+    "ioredis": "^5.11.1",
+    "kafkajs": "^2.2.4",
+    "pg": "^8.21.0"
   }
 }
