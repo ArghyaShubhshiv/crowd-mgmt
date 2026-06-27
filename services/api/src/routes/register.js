@@ -8,30 +8,32 @@ export default async function registerRoutes(fastify) {
     schema: {
       body: {
         type: 'object',
-        required: ['email', 'password'],
+        required: ['email', 'username', 'password'],
         properties: {
           email:    { type: 'string', minLength: 3 },
+          username: {type: 'string', minLength: 8},
           password: { type: 'string', minLength: 8 },
         },
       },
     },
   }, async (request, reply) => {
-    const { email, password } = request.body
+    const {username, email, password } = request.body
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS)
 
     try {
       const result = await getPool().query(
-        `INSERT INTO users (email, password_hash)
+        `INSERT INTO users (email, username, password_hash)
          VALUES ($1, $2)
-         RETURNING id, email, created_at`,
-        [email.toLowerCase(), passwordHash]
+         RETURNING id, username, email, created_at`,
+        [email.toLowerCase(), username, passwordHash]
       )
       return reply.code(201).send({ user: result.rows[0] })
     } catch (err) {
       if (err.code === '23505') {
+        const field = err.constraint === 'users_username_key' ? 'username' : 'email'
         return reply.code(409).send({
           error: 'Conflict',
-          message: 'An account with that email already exists.',
+          message: `An account with that ${field} already exists.`,
         })
       }
       request.log.error(err)

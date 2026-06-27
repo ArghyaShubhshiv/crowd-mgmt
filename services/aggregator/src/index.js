@@ -1,9 +1,10 @@
 import { kafka, redis } from '@crowd-mgmt/shared'
 import { getPool } from '@crowd-mgmt/shared/db.js'
 
-const WINDOW_MS   = 10_000
-const FLUSH_MS    = 1_000
-const ZONE_TTL_MS = 60_000
+const WINDOW_MS     = 10_000
+const FLUSH_MS      = 1_000
+const ZONE_TTL_MS   = 60_000
+const HISTORY_EVERY = 10        // persist a snapshot every 10th flush (~10s)
 
 const consumer = kafka.consumer({ groupId: 'aggregator' })
 
@@ -11,7 +12,6 @@ const zones = new Map()                                       // zoneKey -> { ev
 const zoneKey    = (eventSlug, zone) => `zone:${eventSlug}:${zone}`
 const visitorKey = (eventSlug)       => `visitor_zone:${eventSlug}`
 
-// --- geo: cache each event's zone centers, looked up by event slug ---
 const zoneGeoCache = new Map()  // eventSlug -> { zones, loadedAt }
 
 async function getZonesForEvent(eventSlug) {
@@ -41,6 +41,25 @@ function nearestZone(lat, lng, zoneList) {
   return best
 }
 
+// Batched, fault-isolated history write. Never let a DB error kill the pipeline.
+async function persistHistory(rows) {
+  const values = []
+  const params = []
+  rows.forEach((r, i) => {
+    const b = i * 3
+    values.push(`($${b + 1}, $${b + 2}, $${b + 3})`)
+    params.push(r.eventSlug, r.zone, r.density)
+  })
+  try {
+    await getPool().query(
+      `INSERT INTO density_history (event_slug, zone_slug, density) VALUES ${values.join(', ')}`,
+      params
+    )
+  } catch (e) {
+    console.error('[Aggregator] history write failed (live pipeline unaffected):', e.message)
+  }
+}
+
 const run = async () => {
   await consumer.connect()
   console.log('[Aggregator] connected')
@@ -52,14 +71,12 @@ const run = async () => {
 
       if (lat == null || lng == null) return
 
-      // server decides the zone from the coordinates
       const eventZones = await getZonesForEvent(event_slug)
       if (eventZones.length === 0) return
       const nearest = nearestZone(lat, lng, eventZones)
       if (!nearest) return
       const zone_id = nearest.slug
 
-      // ----- single-occupancy logic (unchanged; org -> event_slug) -----
       const raw = await redis.hget(visitorKey(event_slug), visitor_token)
       let prevZone = null, prevTs = 0
       if (raw) {
@@ -81,14 +98,21 @@ const run = async () => {
     }
   })
 
+  let flushTick = 0
   setInterval(async () => {
-    const cutoff = Date.now() - WINDOW_MS
+    const cutoff  = Date.now() - WINDOW_MS
+    const persist = (++flushTick % HISTORY_EVERY === 0)
+    const snapshot = []
+
     for (const [key, { eventSlug, zone }] of zones) {
       await redis.zremrangebyscore(key, '-inf', `(${cutoff}`)
       const density = await redis.zcard(key)
       await redis.hset(`density:${eventSlug}`, zone, density)
+      if (persist) snapshot.push({ eventSlug, zone, density })
       console.log(`[Aggregator] ${eventSlug} / ${zone} → ${density}`)
     }
+
+    if (persist && snapshot.length) await persistHistory(snapshot)
   }, FLUSH_MS)
 }
 

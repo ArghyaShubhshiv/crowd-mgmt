@@ -6,6 +6,10 @@ import orgRoutes from './routes/orgs.js'
 import eventRoutes from './routes/events.js'
 import addFormats from 'ajv-formats'
 import zoneRoutes from './routes/zones.js'
+import cors from '@fastify/cors'
+import publicZoneRoutes from './routes/publicZones.js'
+import authPlugin from './routes/auth.js'
+import publicHistoryRoutes from './routes/publicHistory.js'
 
 const fastify = Fastify({
   logger: true,
@@ -14,11 +18,15 @@ const fastify = Fastify({
   }
 })
 
-fastify.register(healthRoutes)
-fastify.register(registerRoutes)
-fastify.register(orgRoutes)
-fastify.register(eventRoutes)
-fastify.register(zoneRoutes)
+await fastify.register(publicHistoryRoutes)
+await fastify.register(cors, { origin: true }) 
+await fastify.register(authPlugin)   
+await fastify.register(healthRoutes)
+await fastify.register(registerRoutes)
+await fastify.register(orgRoutes)
+await fastify.register(eventRoutes)
+await fastify.register(zoneRoutes)
+await fastify.register(publicZoneRoutes)         // public — no authenticate
 
 const start = async () => {
   try {

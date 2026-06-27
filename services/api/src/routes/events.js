@@ -3,6 +3,7 @@ import { format } from "mysql2"
 
 export default async function eventRoutes(fastify){
     fastify.post('/orgs/:orgId/events', {
+        preHandler: [fastify.authenticate],
         schema: {
             params: {
                 type: 'object',
@@ -25,7 +26,7 @@ export default async function eventRoutes(fastify){
             }
         }
     }, async (request, reply) => {
-        const userId = request.user?.id ?? request.headers['x-user-id'];
+        const userId = request.user.id
         if (!userId){
             return reply.code(401).send({message: "No user object sent."});
         }

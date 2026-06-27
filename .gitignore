@@ -1,6 +1,23 @@
+# dependencies
 node_modules/
+
+# env files (root + web, all variants)
 .env
+.env.*
+!.env.example
+
+# logs
 *.log
+
+# build output
 dist/
 build/
+
+# vite
+web/dist/
+.vite/
+
+# os / editor
 .DS_Store
+.vscode/
+*.local

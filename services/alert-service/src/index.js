@@ -22,10 +22,13 @@ async function getZoneThresholds(eventSlug) {
       WHERE e.slug = $1`,
     [eventSlug]
   )
+
   const byZone = new Map(
     rows.map((r) => [r.slug, { warning: r.warning_threshold, critical: r.critical_threshold }])
   )
+
   thresholdCache.set(eventSlug, { byZone, loadedAt: Date.now() })
+  
   return byZone
 }
 

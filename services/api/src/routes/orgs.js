@@ -2,7 +2,7 @@ import { getPool } from '@crowd-mgmt/shared/db.js'
 
 export default async function orgRoutes(fastify) {
   fastify.post('/orgs', {
-    // preHandler: fastify.authenticate,   // ← Phase 2: verifies the token, sets request.user
+    preHandler: [fastify.authenticate],
     schema: {
       body: {
         type: 'object',
@@ -12,7 +12,7 @@ export default async function orgRoutes(fastify) {
     },
   }, async (request, reply) => {
     // TEMP until auth exists: real value will come from request.user.id (the verified token)
-    const userId = request.user?.id ?? request.headers['x-user-id']
+    const userId = request.user.id
     if (!userId) return reply.code(401).send({ error: 'Unauthorized' })
 
     const { name } = request.body

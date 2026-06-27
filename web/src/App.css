@@ -1,0 +1,22 @@
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+.app { height: 100vh; display: flex; flex-direction: column;
+       background: #0f1115; color: #e6e8eb; font-family: system-ui, sans-serif; }
+.topbar { display: flex; align-items: center; gap: 12px;
+          padding: 12px 20px; border-bottom: 1px solid #272b33; }
+.topbar h1 { font-size: 16px; font-weight: 600; margin: 0; }
+.status { font-size: 13px; color: #8a8f98; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #ef4444; }
+.dot.live { background: #22c55e; }
+#map { flex: 1; }
+.banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+          padding: 12px; text-align: center; font-weight: 600; color: #fff; }
+.banner.critical { background: #dc2626; }
+.banner.warning  { background: #d97706; }
+.banner.ok       { background: #16a34a; }
+.pulse { animation: pulse 1s ease-in-out infinite; }
+.graph { background: #1a1d23; border-top: 1px solid #272b33; padding: 14px 20px 20px; }
+.graph-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
+               color: #8a8f98; margin-bottom: 10px; }
+
+@keyframes pulse { 0%, 100% { fill-opacity: .3; } 50% { fill-opacity: .7; } }

@@ -2,6 +2,7 @@ import { getPool } from '@crowd-mgmt/shared/db.js'
 
 export default async function zoneRoutes(fastify) {
   fastify.post('/events/:eventId/zones', {
+    preHandler: [fastify.authenticate],
     schema: {
       params: {
         type: 'object',
@@ -23,7 +24,7 @@ export default async function zoneRoutes(fastify) {
       },
     },
   }, async (request, reply) => {
-    const userId = request.user?.id ?? request.headers['x-user-id']
+    const userId = request.user.id
     if (!userId) return reply.code(401).send({ error: 'Unauthorized' })
 
     const { eventId } = request.params
