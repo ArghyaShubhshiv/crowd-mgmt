@@ -1,18 +1,21 @@
 import { kafka, redis } from '@crowd-mgmt/shared'
 import { getPool } from '@crowd-mgmt/shared/db.js'
 
-const WINDOW_MS     = 10_000
+const WINDOW_MS     = 15_000    // Sliding window duration
+const HEARTBEAT_MS  = 3_000     // Force Redis ping if local state hasn't flushed
 const FLUSH_MS      = 1_000
 const ZONE_TTL_MS   = 60_000
-const HISTORY_EVERY = 10        // persist a snapshot every 10th flush (~10s)
+const HISTORY_EVERY = 10        // Persist a snapshot every 10th flush
 
 const consumer = kafka.consumer({ groupId: 'aggregator' })
 
-const zones = new Map()                                       // zoneKey -> { eventSlug, zone }
+const localVisitorState = new Map()
+const zones = new Map()
+let samples = []
+
 const zoneKey    = (eventSlug, zone) => `zone:${eventSlug}:${zone}`
 const visitorKey = (eventSlug)       => `visitor_zone:${eventSlug}`
-
-const zoneGeoCache = new Map()  // eventSlug -> { zones, loadedAt }
+const zoneGeoCache = new Map()
 
 async function getZonesForEvent(eventSlug) {
   const cached = zoneGeoCache.get(eventSlug)
@@ -41,7 +44,6 @@ function nearestZone(lat, lng, zoneList) {
   return best
 }
 
-// Batched, fault-isolated history write. Never let a DB error kill the pipeline.
 async function persistHistory(rows) {
   const values = []
   const params = []
@@ -56,63 +58,109 @@ async function persistHistory(rows) {
       params
     )
   } catch (e) {
-    console.error('[Aggregator] history write failed (live pipeline unaffected):', e.message)
+    console.error('[Aggregator] history write failed:', e.message)
   }
 }
 
 const run = async () => {
   await consumer.connect()
-  console.log('[Aggregator] connected')
+  console.log('[Aggregator] Arghya Shubhshiv (IIT2024236) Pipeline Connected')
   await consumer.subscribe({ topic: 'locations', fromBeginning: false })
 
   await consumer.run({
-    eachMessage: async ({ message }) => {
-      const { visitor_token, event_slug, lat, lng, server_ts } = JSON.parse(message.value.toString())
+    maxWaitTimeInMs: 250,
+    eachBatch: async ({ batch, resolveOffset, heartbeat }) => {
+      const pipeline = redis.pipeline()
+      let queued = 0     // count ANY command queued into the pipeline, not just writes
 
-      if (lat == null || lng == null) return
+      for (const message of batch.messages) {
+        const { visitor_token, event_slug, lat, lng, server_ts } = JSON.parse(message.value.toString())
+        if (lat == null || lng == null) continue
 
-      const eventZones = await getZonesForEvent(event_slug)
-      if (eventZones.length === 0) return
-      const nearest = nearestZone(lat, lng, eventZones)
-      if (!nearest) return
-      const zone_id = nearest.slug
+        samples.push(Date.now() - server_ts)
 
-      const raw = await redis.hget(visitorKey(event_slug), visitor_token)
-      let prevZone = null, prevTs = 0
-      if (raw) {
-        const [z, t] = raw.split('|')
-        prevZone = z
-        prevTs = Number(t)
+        const eventZones = await getZonesForEvent(event_slug)
+        if (eventZones.length === 0) continue
+
+        const nearest = nearestZone(lat, lng, eventZones)
+        if (!nearest) continue
+        const zone_id = nearest.slug
+
+        // count EVERY processed ping (mirrors the feeder's "sent"), before the write gate
+        pipeline.hincrby(`received:${event_slug}`, zone_id, 1)
+        queued++
+
+        // ordering guard: ignore out-of-order pings
+        const prevState = localVisitorState.get(visitor_token)
+        if (prevState && server_ts <= prevState.ts) {
+          resolveOffset(message.offset)
+          continue
+        }
+
+        let requiresRedisWrite = false
+        if (!prevState) {
+          requiresRedisWrite = true
+        } else if (prevState.zone !== zone_id) {
+          pipeline.zrem(zoneKey(event_slug, prevState.zone), visitor_token)
+          queued++
+          requiresRedisWrite = true
+        } else if (server_ts - prevState.last_redis_update > HEARTBEAT_MS) {
+          requiresRedisWrite = true
+        }
+
+        if (requiresRedisWrite) {
+          const now = Date.now()
+          pipeline.zadd(zoneKey(event_slug, zone_id), now, visitor_token)
+          pipeline.hset(visitorKey(event_slug), visitor_token, `${zone_id}|${now}`)
+          queued += 2
+          localVisitorState.set(visitor_token, {
+            event_slug, zone: zone_id, ts: server_ts, last_redis_update: now,
+          })
+        } else {
+          localVisitorState.set(visitor_token, {
+            event_slug, zone: zone_id, ts: server_ts, last_redis_update: prevState.last_redis_update,
+          })
+        }
+
+        zones.set(zoneKey(event_slug, zone_id), { eventSlug: event_slug, zone: zone_id })
+        resolveOffset(message.offset)
       }
 
-      if (server_ts <= prevTs) return
-
-      if (prevZone && prevZone !== zone_id) {
-        await redis.zrem(zoneKey(event_slug, prevZone), visitor_token)
+      // exec whenever ANYTHING was queued (received-counts included), not only on writes
+      if (queued > 0) {
+        await pipeline.exec()
       }
-
-      await redis.zadd(zoneKey(event_slug, zone_id), server_ts, visitor_token)
-      await redis.hset(visitorKey(event_slug), visitor_token, `${zone_id}|${server_ts}`)
-
-      zones.set(zoneKey(event_slug, zone_id), { eventSlug: event_slug, zone: zone_id })
+      await heartbeat()
     }
   })
 
   let flushTick = 0
   setInterval(async () => {
-    const cutoff  = Date.now() - WINDOW_MS
     const persist = (++flushTick % HISTORY_EVERY === 0)
     const snapshot = []
 
     for (const [key, { eventSlug, zone }] of zones) {
+      const cutoff = Date.now() - WINDOW_MS
       await redis.zremrangebyscore(key, '-inf', `(${cutoff}`)
       const density = await redis.zcard(key)
       await redis.hset(`density:${eventSlug}`, zone, density)
       if (persist) snapshot.push({ eventSlug, zone, density })
-      console.log(`[Aggregator] ${eventSlug} / ${zone} → ${density}`)
+    }
+
+    for (const [token, state] of localVisitorState) {
+      if (Date.now() - state.ts > WINDOW_MS * 2) {
+        localVisitorState.delete(token)
+      }
     }
 
     if (persist && snapshot.length) await persistHistory(snapshot)
+
+    if (persist && samples.length) {
+      samples.sort((a, b) => a - b)
+      const p = (q) => samples[Math.floor(samples.length * q)]
+      console.log(`[latency] n=${samples.length} p50=${p(0.5)}ms p95=${p(0.95)}ms p99=${p(0.99)}ms max=${samples[samples.length - 1]}ms`)
+      samples = []
+    }
   }, FLUSH_MS)
 }
 

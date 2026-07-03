@@ -1,0 +1,420 @@
+82897984294)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=44
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 45
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 60
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 12
+[flush] zones=3 localState=222
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 276
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 253
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 59
+[flush] zones=3 localState=381
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 485
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 411
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 95
+[flush] zones=3 localState=511
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 690
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 546
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 126
+[flush] zones=3 localState=625
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 875
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 695
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 162
+[flush] zones=3 localState=729
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1030
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 810
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 211
+[latency] n=6079 p50=797ms p95=37879ms p99=37977ms max=38006ms
+[flush] zones=3 localState=877
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1225
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 972
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 249
+[flush] zones=3 localState=1001
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1410
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1143
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 284
+[flush] zones=3 localState=1150
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1653
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1338
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 328
+[flush] zones=3 localState=1263
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1833
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1492
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 356
+[flush] zones=3 localState=1378
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1975
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1621
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 387
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1984
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1629
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 387
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1984
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1629
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 387
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1984
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1629
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 387
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1984
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1629
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 387
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1977
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1615
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 386
+[latency] n=9744 p50=24588ms p95=52347ms p99=55180ms max=56773ms
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1921
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1559
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 370
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1514
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1221
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 292
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1399
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1156
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 278
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1109
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 930
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 225
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 700
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 598
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 129
+[flush] zones=3 localState=1384
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 298
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 263
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 54
+[flush] zones=3 localState=1384
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 145 → 0 (cutoff=1782898009196)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 130 → 0 (cutoff=1782898009199)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 30 → 0 (cutoff=1782898009201)
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1384
+[latency] n=10544 p50=45829ms p95=62081ms p99=64959ms max=66826ms
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1384
+[flush] zones=3 localState=1380
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898018197)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 4 → 0 (cutoff=1782898018200)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 1 → 0 (cutoff=1782898018202)
+[flush] zones=3 localState=1349
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 15 → 0 (cutoff=1782898019197)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 19 → 0 (cutoff=1782898019200)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 31 → 0 (cutoff=1782898019205)
+[flush] zones=3 localState=1167
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 59 → 0 (cutoff=1782898020197)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 84 → 0 (cutoff=1782898020202)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 116 → 0 (cutoff=1782898020226)
+[flush] zones=3 localState=942
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 3 → 0 (cutoff=1782898021199)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 1 → 0 (cutoff=1782898021338)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 5 → 0 (cutoff=1782898021432)
+[flush] zones=3 localState=662
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 5 → 0 (cutoff=1782898022213)
+[flush] zones=3 localState=348
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 12 → 0 (cutoff=1782898023488)
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 1
+[flush] zones=3 localState=28
+[latency] n=7455 p50=54815ms p95=70331ms p99=72865ms max=74548ms
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898024218)
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 7
+[flush] zones=3 localState=5
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 3
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 17 → 0 (cutoff=1782898025497)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 10 → 0 (cutoff=1782898025656)
+[flush] zones=3 localState=5
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898026224)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 4 → 0 (cutoff=1782898026303)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 21 → 0 (cutoff=1782898026349)
+[flush] zones=3 localState=29
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 6 → 0 (cutoff=1782898027230)
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 1
+[flush] zones=3 localState=183
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 14 → 0 (cutoff=1782898027432)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 51 → 0 (cutoff=1782898027434)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 63 → 0 (cutoff=1782898027435)
+[flush] zones=3 localState=383
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 39 → 0 (cutoff=1782898114714)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 37 → 0 (cutoff=1782898114715)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 32 → 0 (cutoff=1782898114716)
+[flush] zones=3 localState=431
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 21 → 0 (cutoff=1782898115810)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 85 → 0 (cutoff=1782898115815)
+[flush] zones=3 localState=503
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 2
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 139 → 0 (cutoff=1782898116717)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 161 → 0 (cutoff=1782898116719)
+[flush] zones=3 localState=458
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 74 → 0 (cutoff=1782898117714)
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 6
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 2
+[latency] n=2642 p50=152822ms p95=169563ms p99=171368ms max=172245ms
+[flush] zones=3 localState=685
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 47 → 0 (cutoff=1782898118715)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 162 → 0 (cutoff=1782898118717)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 215 → 0 (cutoff=1782898118719)
+[flush] zones=3 localState=454
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 69 → 0 (cutoff=1782898119715)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 23 → 0 (cutoff=1782898119720)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 88 → 0 (cutoff=1782898119725)
+[flush] zones=3 localState=468
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898120737)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 9 → 0 (cutoff=1782898120814)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 1 → 0 (cutoff=1782898120895)
+[flush] zones=3 localState=228
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 23 → 0 (cutoff=1782898121725)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 66 → 0 (cutoff=1782898121732)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 79 → 0 (cutoff=1782898121739)
+[flush] zones=3 localState=261
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 4
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 1
+[flush] zones=3 localState=306
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 3
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 26 → 0 (cutoff=1782898123742)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 61 → 0 (cutoff=1782898123760)
+[flush] zones=3 localState=314
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 84 → 0 (cutoff=1782898124726)
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 52 → 0 (cutoff=1782898124742)
+[flush] zones=3 localState=96
+[flush] zones=3 localState=1
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 1
+[flush] zones=3 localState=0
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 1
+[flush] zones=3 localState=5
+[flush] zones=3 localState=5
+[flush] zones=3 localState=5
+[flush] zones=3 localState=5
+[flush] zones=3 localState=5
+[flush] zones=3 localState=5
+[flush] zones=3 localState=5
+[flush] zones=3 localState=8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898128744)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898129758)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898133210)
+[flush] zones=3 localState=8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898134176)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898139708)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898141318)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 4 → 0 (cutoff=1782898142650)
+[flush] zones=3 localState=8
+[flush] zones=3 localState=8
+[flush] zones=3 localState=8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 1 → 0 (cutoff=1782898143650)
+[flush] zones=3 localState=8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145186)
+[flush] zones=3 localState=8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145438)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145439)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145439)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145439)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145439)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 3 → 0 (cutoff=1782898145439)
+{"level":"WARN","timestamp":"2026-07-01T09:30:10.150Z","logger":"kafkajs","message":"[RequestQueue] Response without match","clientId":"crowd-mgmt","broker":"localhost:9092","correlationId":175404}
+[flush] zones=3 localState=8
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 1 → 0 (cutoff=1782898149724)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[latency] n=3288 p50=159377ms p95=175583ms p99=178674ms max=245411ms
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[Aggregator] pragati-maidan-book-fair-2026 / macmillan → 9
+[flush] zones=3 localState=76
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 27 → 0 (cutoff=1782898202936)
+[flush] zones=3 localState=0
+[latency] n=78 p50=243109ms p95=248996ms p99=249406ms max=249406ms
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 2 → 0 (cutoff=1782898255202)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 4 → 0 (cutoff=1782898255320)
+[flush] zones=3 localState=0
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 5 → 0 (cutoff=1782898255663)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[latency] n=1 p50=310158ms p95=310158ms p99=310158ms max=310158ms
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=79
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 8 → 0 (cutoff=1782898266512)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[latency] n=86 p50=305587ms p95=312987ms p99=313244ms max=313244ms
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+{"level":"WARN","timestamp":"2026-07-01T09:31:53.005Z","logger":"kafkajs","message":"[RequestQueue] Response without match","clientId":"crowd-mgmt","broker":"localhost:9092","correlationId":175406}
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 15 → 0 (cutoff=1782898327038)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 62 → 0 (cutoff=1782898330564)
+[flush] zones=3 localState=0
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 129 → 0 (cutoff=1782898332176)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[Aggregator] pragati-maidan-book-fair-2026 / rupa → 71
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 12
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 52 → 0 (cutoff=1782898336888)
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 52 → 0 (cutoff=1782898338108)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[latency] n=1 p50=363625ms p95=363625ms p99=363625ms max=363625ms
+[flush] zones=3 localState=0
+[flush] zones=3 localState=259
+[Aggregator] pragati-maidan-book-fair-2026 / penguin → 82
+[flush] zones=3 localState=259
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 66 → 0 (cutoff=1782898344502)
+[latency] n=335 p50=384439ms p95=397603ms p99=397760ms max=398057ms
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+{"level":"WARN","timestamp":"2026-07-01T09:32:44.591Z","logger":"kafkajs","message":"[RequestQueue] Response without match","clientId":"crowd-mgmt","broker":"localhost:9092","correlationId":175407}
+[flush] zones=3 localState=0
+{"level":"WARN","timestamp":"2026-07-01T09:32:45.176Z","logger":"kafkajs","message":"[RequestQueue] Response without match","clientId":"crowd-mgmt","broker":"localhost:9092","correlationId":175408}
+[flush] zones=3 localState=0
+{"level":"WARN","timestamp":"2026-07-01T09:32:46.171Z","logger":"kafkajs","message":"[RequestQueue] Response without match","clientId":"crowd-mgmt","broker":"localhost:9092","correlationId":175409}
+{"level":"ERROR","timestamp":"2026-07-01T09:32:46.312Z","logger":"kafkajs","message":"[Connection] Response Heartbeat(key: 12, version: 3)","broker":"localhost:9092","clientId":"crowd-mgmt","error":"The coordinator is not aware of this member","correlationId":175410,"size":10}
+{"level":"ERROR","timestamp":"2026-07-01T09:32:46.890Z","logger":"kafkajs","message":"[Connection] Response OffsetCommit(key: 8, version: 5)","broker":"localhost:9092","clientId":"crowd-mgmt","error":"The coordinator is not aware of this member","correlationId":175411,"size":39}
+[flush] zones=3 localState=254
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 150 → 0 (cutoff=1782898352968)
+{"level":"ERROR","timestamp":"2026-07-01T09:32:48.822Z","logger":"kafkajs","message":"[Connection] Response Heartbeat(key: 12, version: 3)","broker":"localhost:9092","clientId":"crowd-mgmt","error":"The coordinator is not aware of this member","correlationId":175412,"size":10}
+[flush] WIPED zone:pragati-maidan-book-fair-2026:rupa: 203 → 0 (cutoff=1782898353783)
+[flush] zones=3 localState=0
+{"level":"ERROR","timestamp":"2026-07-01T09:32:49.947Z","logger":"kafkajs","message":"[Connection] Response OffsetCommit(key: 8, version: 5)","broker":"localhost:9092","clientId":"crowd-mgmt","error":"The coordinator is not aware of this member","correlationId":175413,"size":39}
+{"level":"ERROR","timestamp":"2026-07-01T09:32:50.020Z","logger":"kafkajs","message":"[Runner] The coordinator is not aware of this member, re-joining the group","groupId":"aggregator","memberId":"crowd-mgmt-69beea83-957e-45f6-b5d8-ece7b69e92df","error":"The coordinator is not aware of this member"}
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] WIPED zone:pragati-maidan-book-fair-2026:macmillan: 34 → 0 (cutoff=1782898356338)
+[latency] n=326 p50=391275ms p95=406100ms p99=406403ms max=407216ms
+[flush] WIPED zone:pragati-maidan-book-fair-2026:penguin: 64 → 0 (cutoff=1782898357129)
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0
+[flush] zones=3 localState=0

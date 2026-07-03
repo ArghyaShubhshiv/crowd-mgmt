@@ -124,7 +124,7 @@ services:
       # Same story for the transactions state log. ISR = In-Sync Replicas.
       # Min ISR of 1 means a single replica is sufficient to ack a write.
 
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
       # Kafka creates a topic the first time a producer writes to it.
       # Convenient for dev. In prod, disable this and manage topics explicitly
       # (otherwise typos silently create phantom topics).

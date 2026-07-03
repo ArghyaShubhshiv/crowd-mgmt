@@ -15,10 +15,10 @@ export default function KpiBanner({ zones, densities }) {
 
   return (
     <div className="kpis">
-      <Kpi label="Total People" value={total} />
-      <Kpi label="Active Zones" value={<>{active}<span className="kpi-sub"> / {zones.size}</span></>} />
+      <Kpi label="Total People: " value={total} />
+      <Kpi label="Active Zones: " value={<>{active}<span className="kpi-sub"> / {zones.size}</span></>} />
       <Kpi
-        label="Busiest Zone"
+        label="Busiest Zone: "
         value={busiest && busiest.count > 0 ? `${busiest.name} (${busiest.count})` : '—'}
         color={busiest && busiest.count > 0 ? COLORS[busiest.severity] : undefined}
       />

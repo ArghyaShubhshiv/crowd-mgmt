@@ -1,0 +1,45 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  border-bottom: 1px solid #1c1f26;
+}
+.nav-brand { font-size: 18px; font-weight: 700; color: #e6e8eb; text-decoration: none; letter-spacing: -.01em; }
+.nav-links { display: flex; align-items: center; gap: 18px; }
+.nav-link { color: #b5bac2; text-decoration: none; font-size: 14px; }
+.nav-link:hover { color: #fff; }
+.nav-btn {
+  background: #2563eb; color: #fff; border: none; border-radius: 8px;
+  padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none;
+}
+.nav-btn:hover { background: #1d4ed8; }
+
+.landing { min-height: 100vh; background: #0b0d11; color: #e6e8eb;
+           font-family: 'Inter', system-ui, sans-serif; display: flex; flex-direction: column; }
+
+.hero { text-align: center; padding: 90px 24px 70px; max-width: 760px; margin: 0 auto; }
+.hero-badge {
+  display: inline-block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  color: #93c5fd; background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.3);
+  border-radius: 999px; padding: 6px 14px; margin-bottom: 24px;
+}
+.hero-title { font-size: 46px; line-height: 1.1; font-weight: 800; margin: 0 0 20px; letter-spacing: -.02em; }
+.hero-sub { font-size: 17px; line-height: 1.6; color: #9aa0aa; margin: 0 auto 32px; max-width: 620px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; }
+.hero-btn { padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 600; text-decoration: none; }
+.hero-btn.primary { background: #2563eb; color: #fff; }
+.hero-btn.primary:hover { background: #1d4ed8; }
+.hero-btn.ghost { background: transparent; color: #e6e8eb; border: 1px solid #2a2f38; }
+.hero-btn.ghost:hover { border-color: #3a3f48; }
+
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px; max-width: 1000px; margin: 0 auto; padding: 20px 40px 60px; width: 100%;
+}
+.feature-card { background: #15181d; border: 1px solid #23272f; border-radius: 14px; padding: 22px; }
+.feature-card h3 { margin: 0 0 8px; font-size: 16px; }
+.feature-card p { margin: 0; font-size: 14px; line-height: 1.6; color: #9aa0aa; }
+
+.landing-foot { margin-top: auto; text-align: center; padding: 24px;
+                border-top: 1px solid #1c1f26; color: #6b7280; font-size: 13px; }

@@ -19,7 +19,8 @@ const ws = new WebSocket(`${WS}/live?event_slug=${SLUG}`)
 
             ws.onmessage = (e) =>{
                 const msg = JSON.parse(e.data);
-                if (msg.type === 'alert') setAlert(msg)
+                      if (msg.type === 'alert') { console.log('ALERT FRAME', msg); setAlert(msg) }
+
                 else if (msg.densities) setDensities(msg.densities)
             }
 

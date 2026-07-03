@@ -2,7 +2,7 @@ import 'dotenv/config'
 import amqp from 'amqplib'
 
 let connection = null
-let channel = null
+let channel = null   
 
 // RabbitMQ connections are expensive to create — one per process is the pattern.
 // Channels are cheap — you can create multiple per connection.

@@ -11,7 +11,6 @@ export default async function orgRoutes(fastify) {
       },
     },
   }, async (request, reply) => {
-    // TEMP until auth exists: real value will come from request.user.id (the verified token)
     const userId = request.user.id
     if (!userId) return reply.code(401).send({ error: 'Unauthorized' })
 

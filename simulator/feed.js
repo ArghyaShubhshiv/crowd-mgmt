@@ -1,11 +1,12 @@
-const EVENT_SLUG = 'summer-fest-2026'
+const EVENT_SLUG = 'pragati-maidan-book-fair-2026'
 const URL = `ws://localhost:3002/locations?event_slug=${EVENT_SLUG}`
 const VISITORS = Number(process.argv[2]) || 60
 
 const CENTERS = [
-  { name: 'main-stage', lat: 28.6139, lng: 77.2090 },
-  { name: 'food-court', lat: 28.6155, lng: 77.2120 },
-  { name: 'north-gate', lat: 28.6170, lng: 77.2095 },
+  { name: 'macmillan', lat: 28.6129, lng: 77.2295 },
+  { name: 'penguin', lat: 28.6155, lng: 77.2270 },
+  { name: 'rupa', lat: 28.6105, lng: 77.2250 },
+  {name: "simon-schuster", lat: 28.6129, lng: 77.2295}, //28.6129° N, 77.2295° E
 ]
 const JITTER = 0.0003
 

@@ -23,7 +23,7 @@ export default async function registerRoutes(fastify) {
     try {
       const result = await getPool().query(
         `INSERT INTO users (email, username, password_hash)
-         VALUES ($1, $2)
+         VALUES ($1, $2, $3)
          RETURNING id, username, email, created_at`,
         [email.toLowerCase(), username, passwordHash]
       )
