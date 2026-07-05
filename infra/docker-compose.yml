@@ -4,9 +4,6 @@ services:
   # ── POSTGRES ────────────────────────────────────────────────────
   postgres:
     image: postgres:17-alpine
-    # 17 = current stable major (released Sept 2024).
-    # -alpine strips non-essential OS packages: ~80MB vs ~400MB full image.
-    # Never use :latest in compose — it moves silently and breaks reproducibility.
     environment:
       POSTGRES_DB: crowd_mgmt
       POSTGRES_USER: crowd
@@ -40,8 +37,6 @@ services:
   # ── REDIS ────────────────────────────────────────────────────────
   redis:
     image: redis:8-alpine
-    # Redis 8 (8.8.0 as of June 2026). Redis 8 added vector search natively,
-    # but we're using it for pub/sub, geofencing cache, and session state.
     command: redis-server --appendonly yes
     # Overrides the default CMD. --appendonly yes enables AOF (Append Only File)
     # persistence: every write command is logged to disk.

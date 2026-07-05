@@ -2,10 +2,10 @@ import { kafka, redis } from '@crowd-mgmt/shared'
 import { getPool } from '@crowd-mgmt/shared/db.js'
 
 const WINDOW_MS     = 15_000    // Sliding window duration
-const HEARTBEAT_MS  = 3_000     // Force Redis ping if local state hasn't flushed
+const HEARTBEAT_MS  = 3_000     // force a Redis refresh at least this often for a stationary visitor, so they don't age out
 const FLUSH_MS      = 1_000
-const ZONE_TTL_MS   = 60_000
-const HISTORY_EVERY = 10        // Persist a snapshot every 10th flush
+const ZONE_TTL_MS   = 60_000    // re-fetch zone definitions from Postgres at most this often
+const HISTORY_EVERY = 10        // persist a density snapshot to Postgres every Nth flush
 
 const consumer = kafka.consumer({ groupId: 'aggregator' })
 
@@ -13,9 +13,13 @@ const localVisitorState = new Map()
 const zones = new Map()
 let samples = []
 
+// write-reduction measurement: how many pings would have written vs. actually did
+let pingsProcessed = 0   // pings that passed geofencing (a naive impl would write every one)
+let redisWrites = 0      // pings that actually triggered a Redis write (with the L1 cache)
+
 const zoneKey    = (eventSlug, zone) => `zone:${eventSlug}:${zone}`
 const visitorKey = (eventSlug)       => `visitor_zone:${eventSlug}`
-const zoneGeoCache = new Map()
+const zoneGeoCache = new Map()   // latest zone coordinates
 
 async function getZonesForEvent(eventSlug) {
   const cached = zoneGeoCache.get(eventSlug)
@@ -64,7 +68,7 @@ async function persistHistory(rows) {
 
 const run = async () => {
   await consumer.connect()
-  console.log('[Aggregator] Arghya Shubhshiv (IIT2024236) Pipeline Connected')
+  console.log('[Aggregator] Pipeline Connected')
   await consumer.subscribe({ topic: 'locations', fromBeginning: false })
 
   await consumer.run({
@@ -85,6 +89,8 @@ const run = async () => {
         const nearest = nearestZone(lat, lng, eventZones)
         if (!nearest) continue
         const zone_id = nearest.slug
+
+        pingsProcessed++   // reached the write-decision point; a naive impl would write here
 
         // count EVERY processed ping (mirrors the feeder's "sent"), before the write gate
         pipeline.hincrby(`received:${event_slug}`, zone_id, 1)
@@ -109,6 +115,7 @@ const run = async () => {
         }
 
         if (requiresRedisWrite) {
+          redisWrites++   // the L1 cache let this write through; everything else was skipped
           const now = Date.now()
           pipeline.zadd(zoneKey(event_slug, zone_id), now, visitor_token)
           pipeline.hset(visitorKey(event_slug), visitor_token, `${zone_id}|${now}`)
@@ -144,6 +151,9 @@ const run = async () => {
       await redis.zremrangebyscore(key, '-inf', `(${cutoff}`)
       const density = await redis.zcard(key)
       await redis.hset(`density:${eventSlug}`, zone, density)
+      await redis.expire(key, 60)
+      await redis.expire(`density:${eventSlug}`, 60)
+
       if (persist) snapshot.push({ eventSlug, zone, density })
     }
 
@@ -160,6 +170,15 @@ const run = async () => {
       const p = (q) => samples[Math.floor(samples.length * q)]
       console.log(`[latency] n=${samples.length} p50=${p(0.5)}ms p95=${p(0.95)}ms p99=${p(0.99)}ms max=${samples[samples.length - 1]}ms`)
       samples = []
+    }
+
+    // write-reduction: how much the L1 cache cut Redis writes vs. writing every ping
+    if (persist && pingsProcessed > 0) {
+      const reduction  = (pingsProcessed / Math.max(redisWrites, 1)).toFixed(2)
+      const skippedPct = (100 * (1 - redisWrites / pingsProcessed)).toFixed(1)
+      console.log(`[write-reduction] processed=${pingsProcessed} writes=${redisWrites} -> ${reduction}x fewer writes (${skippedPct}% skipped)`)
+      pingsProcessed = 0
+      redisWrites = 0
     }
   }, FLUSH_MS)
 }

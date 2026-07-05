@@ -12,14 +12,14 @@ export function useLiveDensity(){
 
         function connect(){
             console.log('WS =', WS, 'SLUG =', SLUG)
-const ws = new WebSocket(`${WS}/live?event_slug=${SLUG}`)
+            const ws = new WebSocket(`${WS}/live?event_slug=${SLUG}`)
             wsRef.current = ws
 
             ws.onopen = () => setConnected(true)
 
             ws.onmessage = (e) =>{
                 const msg = JSON.parse(e.data);
-                      if (msg.type === 'alert') { console.log('ALERT FRAME', msg); setAlert(msg) }
+                if (msg.type === 'alert') { console.log('ALERT FRAME', msg); setAlert(msg) }
 
                 else if (msg.densities) setDensities(msg.densities)
             }
