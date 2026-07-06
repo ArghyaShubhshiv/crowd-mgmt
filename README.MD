@@ -40,7 +40,6 @@ flowchart LR
     WS -->|batched produce| K[(Kafka<br/>topic: locations<br/>6 partitions)]
     K -->|consumer group| AGG[aggregator<br/>geofence + window]
     AGG -->|per-zone counts| R[(Redis<br/>sorted sets + hashes)]
-    WS -.->|presence markers| R
     R --> DP[dashboard-push<br/>WebSocket fan-out]
     DP -->|live counts| UI[React dashboard]
     AGG -->|periodic snapshots| PG[(PostgreSQL<br/>durable state)]
@@ -61,7 +60,7 @@ flowchart LR
 
 - **PostgreSQL** holds *durable structure* — users, orgs, events, zone definitions, density history. Slow-changing, relational, transactional.
 - **Redis** holds the *live present moment* — who's in which zone right now. Fast, in-memory, overwritten constantly, self-healing.
-- **In-memory cache** stores the latest timestamp of each user. It reduces the unnecessary Redis writes and checks in case the ping received is older than the newest ping; or the user has remained stationary for a while.  
+- **In-process cache** stores the latest timestamp of each user. It reduces the unnecessary Redis writes and checks in case the ping received is older than the newest ping; or the user has remained stationary for a while. Thereby avoiding redundant network round-trips.
 - **Kafka** is the *stream between them*.
 
 ---
@@ -72,7 +71,7 @@ flowchart LR
 
 2. **Buffer (`Kafka`).** Pings land on the `locations` topic, partitioned 6 ways and keyed by visitor token — which spreads load evenly across partitions while keeping each visitor's pings ordered on one partition.
 
-3. **Aggregate (`aggregator`).** A consumer group reads the stream. For each ping it computes the nearest zone (geofencing) and refreshes that visitor's presence in a Redis sorted set scored by arrival time. A background loop evicts anyone older than the 15-second window and writes the resulting count as each zone's live density. An in-memory L1 cache skips redundant writes for stationary visitors, cutting Redis writes ~3.9×. Stationary users are periodically heartbeated to Redis to avoid eviction. 
+3. **Aggregate (`aggregator`).** A consumer group reads the stream. For each ping it computes the nearest zone (geofencing) and refreshes that visitor's presence in a Redis sorted set scored by arrival time. A background loop evicts anyone older than the 15-second window and writes the resulting count as each zone's live density. An in-process L1 cache skips redundant writes for stationary visitors, cutting Redis writes ~3.9×. Stationary users are periodically heartbeated to Redis to avoid eviction. 
 
 4. **Serve (`Redis`).** The live per-zone counts sit in Redis, read cheaply by downstream services.
 
